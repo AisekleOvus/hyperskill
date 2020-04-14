@@ -1,17 +1,28 @@
 package Mems;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
  
-public class Mems {
+public class Main {
     private static ArrayList<String> logger = new ArrayList<>();
     private static LinkedHashMap<String,String> cards = new LinkedHashMap<>();
     private static LinkedHashMap<String, Integer> mistakes = new LinkedHashMap<>();
     private static Scanner scnr = new Scanner(System.in).useDelimiter(System.lineSeparator());
+    private static String importFileName;
+    private static String exportFileName;
  
     public static void main(String[] args) {
+        for(int i = 0; i < args.length; i++) {
+            importFileName = importFileName!=null ? importFileName : !"-import".equals(args[i]) ? null : i < (args.length-1) ? args[i+1] : null;
+            exportFileName = exportFileName!=null ? exportFileName : !"-export".equals(args[i]) ? null : i < (args.length-1) ? args[i+1] : null;
+        }
+        if(importFileName !=null) {
+            Import();
+            System.out.println();
+        }
         while(true) {
             CrazyPrinter("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):");
             String action = Log(scnr.next());
@@ -22,6 +33,7 @@ public class Mems {
             if( action.toLowerCase().equals("ask")) Ask();
             if( action.toLowerCase().equals("exit")) {
                 CrazyPrinter("Bye bye!");
+                if(exportFileName != null) Export();
                 break;
             }
             if( action.toLowerCase().equals("log")) Log();
@@ -76,9 +88,15 @@ public class Mems {
         Log(str);
     }
     private static void Export() {
+        File exportFile;
         int counter = 0;
-        CrazyPrinter("File name:");
-        try(PrintWriter pw = new PrintWriter(new File(Log(scnr.next())))) {
+        if(exportFileName == null) {
+            CrazyPrinter("File name:");
+            exportFile = new File(Log(scnr.next()));
+        }else {
+            exportFile = new File(exportFileName);
+        }
+        try(PrintWriter pw = new PrintWriter(exportFile)) {
             for(Map.Entry<String, String> entry : cards.entrySet()) {
                 pw.println(entry.getKey());
                 pw.println(entry.getValue());
@@ -91,11 +109,17 @@ public class Mems {
         CrazyPrinter(counter+" cards have been saved.");
     }
     private static void Import() {
+        File importFile;
         String term = "";
         String definition = "";
         int counter = 0;
-        CrazyPrinter("File name:");
-        try(Scanner sc = new Scanner(new File(Log(scnr.next()))).useDelimiter(System.lineSeparator())) {
+        if(importFileName==null) {
+            CrazyPrinter("File name:");
+            importFile = new File(Log(scnr.next()));
+        }else {
+            importFile = new File(importFileName);
+        }
+        try(Scanner sc = new Scanner(importFile).useDelimiter(System.lineSeparator())) {
             while(true) {
                 final Integer mistakeCntr;
                 if(sc.hasNext()) term = sc.next();
@@ -104,9 +128,8 @@ public class Mems {
                 else break;
                 cards.putIfAbsent(term, definition);
                 cards.replace(term, definition);
-/*              mistakes.computeIfPresent(term, (k,v) -> v+mistakeCntr);
-                mistakes.putIfAbsent(term, mistakeCntr);*/
-                mistakes.put(term,mistakeCntr);
+                mistakes.computeIfPresent(term, (k,v) -> v+mistakeCntr);
+                mistakes.putIfAbsent(term, mistakeCntr);
                 counter++;
             }
         } catch (FileNotFoundException fnfe) {
@@ -119,12 +142,10 @@ public class Mems {
     private static void Remove() {
         CrazyPrinter("The card:");
         String card = Log(scnr.next());
-        if(cards.remove(card) != null) {
-            mistakes.remove(card);
+        if(cards.remove(card) != null)
             CrazyPrinter("The card has been removed.");
-        }else {
-            CrazyPrinter("Can't remove \"" + card + "\": there is no such card.");
-        }
+        else
+            CrazyPrinter("Can't remove \""+card+"\": there is no such card.");
     }
  
     private static boolean Ask() {
