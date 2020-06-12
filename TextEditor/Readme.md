@@ -1,7 +1,12 @@
-# Description
-### In this stage, you should implement various other scientific approaches to calculate a readability score:
+# TextEditor
 
-You can look at different ages corresponding to the different scores by the table in [this](https://en.wikipedia.org/wiki/Automated_readability_index) article. This table is suitable for all the algorithms described in this stage. To calculate the age use upper bound of the range. For example, if the range is *12-13 year olds* then it's upper bound is *13 year olds*.
+## About
+
+The text editor allows to search for specific files, edit and open them. You are able to search in opened file using regular expressions. 
+
+### Stage 1/4: A Window editing
+
+Using your competence in inheritance and newly acquired knowledge of SWING, create a window where the user can enter a text
 
 The first one is **Flesch–Kincaid** readability tests. To calculate [this](https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests), you also need to create a method that calculates a number of syllables in a word. The formula is listed below. You can learn more here. You can use the second formula to calculate the index - it allows you to easily calculate the age of a person using the same table from the Automated Readability Index.
 
