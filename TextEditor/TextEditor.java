@@ -218,7 +218,7 @@ public class TextEditor extends JFrame {
         try(FileReader fr = new FileReader(file)) {
             while((c=fr.read())!=-1)
                 text.append((char)c);
-        }catch(IOException ioe) {
+        }catch(Exception e) {
             //ioe.printStackTrace();
         }
         return text.toString();
@@ -231,7 +231,7 @@ public class TextEditor extends JFrame {
         try(FileWriter fw = new FileWriter(file)) {
             fw.write(text);
             fw.flush();
-        }catch(IOException ioe) {
+        }catch(Exception e) {
             //ioe.printStackTrace();
         }
     }
